@@ -2,17 +2,17 @@ def coin_sort_p02():
     coin_dict =  {"£2": 200,"£1": 100,"50p": 50,"20p": 20,"10p":10 }
     coins_interface = ["£2","£1","50p","20p","10p"]
     keys = [1,2,3,4,5,6]
-    settings = {"max_": 10000,"min_":0,"currency_":"GBP","currency_convert":1, "currency_list":["GBP","MGA","USD"]}
+    settings = {"max_": 10000,"min_":0,"currency_":"GBX","currency_convert":1, "currency_list":["GBX","MGA","USD"]}
     while True:
         try:  
-            print("\n================ Coin_Sorter ================ \n" +
+            print("\n          ***Coin Sorter - Main Menu***          \n" +
             "=============== Capstone LTD ================\n**Please input a key**\n")
             navigation_1 = int(input(
-                                "[1] - coin calculator\n" +
+                                "[1] - Coin calculator\n" +
                                 "[2] - Multiple coin calculator\n" + 
                                 "[3] - Print coin list\n" +
                                 "[4] - Set details\n" +
-                                "[5] - display program configurations\n" + 
+                                "[5] - Display program configurations\n" + 
                                 "[6] - Quit the program\n\nYour input: "))
 ###############################################################################################
             if navigation_1 ==6:
@@ -106,6 +106,9 @@ def coin_sort_p02():
                                 print( "***Type: {} -  Number of coins: {}***".format(i , int(remainder/coin_dict[i])))
                                 remainder = remainder % coin_dict[i]
                             print("Your remainder is: {} pence.".format(remainder))
+                            input("Press Enter to continue...\n")
+                            break;
+                            
                         else:
                             print("Value out of range. Please try again!")
                             input("Press Enter to continue...\n")
@@ -125,6 +128,7 @@ def coin_sort_p02():
                             for i in coin_dict:
                                 print( "***Type: {} -  Number of coins: {} - Remainder: {} pence.***".format(i , int(input_/coin_dict[i]),input_ % coin_dict[i]))
                                 print("\n")
+                                input("Press Enter to continue...\n")
                             break;
                         else:
                             print("\nValue out of range - Please try again.\n")
