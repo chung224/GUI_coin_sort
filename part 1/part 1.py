@@ -23,7 +23,10 @@ def coin_sort_p01(): # define the coin sorting function or program
 #######################################################################################################
 #In the first section we grab all the essential tools we will need. 
 
-
+    import os #Import libraries OS used for file exploration, requests is used for API connectivity. 
+    import requests
+    URL_BASE = "https://www.amdoren.com/api/currency.php" # URL to grab information 
+    TESTING = os.getenv("CI", True) # Test if API request works
     def split(word): # define a function to split an input -word- used later. 
         return [char for char in word] # for each element in string print them eg BOB prints [B, O, B]
     coin_dict =  {"£2": 200,"£1": 100,"50p": 50,"20p": 20,"10p":10 } # create dictionary used for reference
@@ -31,8 +34,8 @@ def coin_sort_p01(): # define the coin sorting function or program
     settings = {"max_":10000,"min_":0} # dictionary for configuration settings Max_ and min_ are static configurations required for part 01. The user can print these
     import requests
     URL_BASE = "https://www.amdoren.com/api/currency.php" # URL to grab information 
-    API_KEY = "kGTqizY5mk6BDJQ87vsx8sed6chBmG" # API key required to grab data from web server NB limit of 10 per day for free users
-    
+    API_KEY = "gYTF2whbuE9GRn6qcCzFq5m8SsypSn" # API key required to grab data from web server NB limit of 10 per day for free users
+    number_of_coins_list =[]; # create a list due to various scenarios that will cause incorrect output
     def convert_currency( #define a function to grab currency from a web server we USE JSON format and grab inputs needed to get a response back
                          #requires from_ (the current currency), to (currency to convert to), data_type and finally the API key defined above
         from_: str = "USD", to: str = "INR", amount: float = 1.0, api_key: str = API_KEY) -> str:
@@ -41,7 +44,7 @@ def coin_sort_p01(): # define the coin sorting function or program
         params["from"] = params.pop("from_") #remove key 
         #print(params)
         res = requests.get(URL_BASE, params=params).json() # convert to JSON and use this to grab information from server
-        return print("Your Conversion amount is: {.2f} \nThank you come again!".format(str(res["amount"]))) if res["error"] == 0 else res["error_message"]
+        return print("Your Conversion amount is: {:.2f} \nThank you come again!".format((res["amount"])) if res["error"] == 0 else res["error_message"])
         #Above - print information on currency. 
 
 ##########################################SECTION 2 ###################################################
@@ -50,12 +53,12 @@ def coin_sort_p01(): # define the coin sorting function or program
     
     #say hello to user, describe what program is
     print("================ Coin_Sorter ================ \n=============== Capstone LTD ================")
-    print("Hello there, we can exchange your pennies to any of the following coins:\n- £2\n- £1 \n- 50p\n- 10p")
+    print("Hello there, we can exchange your pennies [p] to any of the following coins:\n- £2[200p]\n- £1[100p] \n- 50p\n- 20p\n- 10p")
     while True: # the -while True- statement is important here. If the user doesnt enter C or I keep asking for appropiate input
         continue_ = input("\nTo display configuration settings, type C. Otherwise type I to continue:\n")
         
         if continue_.upper() == "C": # if user, inputs C, display configuration to user defined by variables at start of function 
-            print ("\nConfiguration settings:\nMax coin input: {}\nMin coin input: {}\nCurrencies: USD, Malagasy Dollars".format(settings['max_'],settings['min_#']))
+            print ("\nConfiguration settings:\nMax coin input: {}\nMin coin input: {}\nCurrencies: USD, Malagasy Dollars".format(settings['max_'],settings['min_']))
             while True: # After the configuration is seen, keep prompting the user to type I to continue. 
                 continue_ = input("\nPress I to continue: \n")
                 if continue_.upper() =="I":
@@ -99,7 +102,7 @@ def coin_sort_p01(): # define the coin sorting function or program
     if exclude.upper() =="Y": # If user wants to exclude inputs: ....(has input Y)
         while True:
             try:
-                print ("please type all the keys corresponding to the coin you want removed:") # type all keys to be removed
+                print ("Please the coins you want removed (Example input - [012] removes £2, £1 and 50p):") # type all keys to be removed
                 for item in range(len(coins_interface)): # the keys correspond to the positions in the list. we record this and use it to
                 #remove chosen values from dictionary
                     print (coins_interface[item] + "     key: [" + str(item) + "]")
@@ -116,6 +119,13 @@ def coin_sort_p01(): # define the coin sorting function or program
     for i in coin_dict: # for each item in the dictionary (after removal of some, if any...print number of coins + remainder)
         print( "***Type: {} -  Number of coins: {} - Remainder: {} pence.***".format(i , int(rounded_input/coin_dict[i]),rounded_input % coin_dict[i]))
     #The bottom secction includes all coins, and ranks the order based on importance (order of dictionary)
+        if int(rounded_input/coin_dict[i])!= 0:
+            number_of_coins_list.append(int(rounded_input/coin_dict[i])) # create a list due to various scenerios that will cause 
+    try:
+        print("\nThe maximum number of coins you can receive is: {}. | The minimum number of coins you can receive is {}.\n".format(max(number_of_coins_list),min(number_of_coins_list)))
+    except:
+        print("\nBoth the Maximum/Minimum number of coins obtained is zero! ")
+    
     print("\nUsing all coins (in order of importance), you will have: ")  
     for i in coin_dict:
         print( "***Type: {} -  Number of coins: {}***".format(i , int(remainder/coin_dict[i])))

@@ -1,0 +1,1 @@
+https://doc.qt.io/qt-5/i18n-source-translation.html --> What the translate option is for
