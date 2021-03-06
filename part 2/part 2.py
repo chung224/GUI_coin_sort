@@ -60,7 +60,7 @@ def coin_sort_p02():
                         while True:
                             try:
                                 settings["currency_"] =input("Please type on of the following currencies\n" + 
-                                                             "[GBP] - UK pounds\n" +
+                                                             "[GBX] - Penny sterling\n" +
                                                              "[USD] - US dollars\n" +
                                                              "[MGA] - malagasy ariary\n" +
                                                              "Input: ").upper()
@@ -72,7 +72,17 @@ def coin_sort_p02():
                     elif sub_navigation =="2":
                         while True:
                             try:
-                                settings["min_"] = int(input("\nCurrent minimum: {}\nPlease enter the minimum coin amount for your currency:[{}]\ninput: ".format(settings["min_"],settings["currency_"])))   
+                                settings["min_"] = float(input("\nCurrent minimum: {}\nPlease enter the minimum coin amount for your currency:[{}]\ninput: ".format(settings["min_"],settings["currency_"])))
+                                while not(settings["min_"].is_integer()):
+                                    input("Penny fractions do not exist. [Press enter to try again]")
+                                    settings["min_"] = float(input("\nCurrent minimum: {}\nPlease enter the minimum coin amount for your currency:[{}]\ninput: ".format(settings["min_"],settings["currency_"])))
+                                while settings["min_"] >= settings["max_"]:
+                                    input("The minimum coin input is equal to greater than maximum coin input. [Press enter to try again]")
+                                    settings["min_"] = float(input("\nCurrent minimum: {}\nPlease enter the minimum coin amount for your currency:[{}]\ninput: ".format(settings["min_"],settings["currency_"])))
+                                while settings["min_"] < 0:
+                                    input("Negative numbers are not allowed. press enter to  try again. ")
+                                    settings["min"] = float(input("\nCurrent minimum: {}\nPlease enter the minimum coin amount for your currency:[{}]\ninput: ".format(settings["min_"],settings["currency_"])))
+                                
                                 print("\nStatus - Settings approved [Minimum input (Currency{}): {}]\nreturning to sub-menu.\n".format(settings["currency_"],str(settings["min_"])))
                                 break;
                             except:
@@ -82,7 +92,16 @@ def coin_sort_p02():
                     elif sub_navigation =="3":
                         while True:
                             try:
-                                settings["max_"] = int(input("\nCurrent minimum: {}\nPlease enter the maximum coin amount for your currency: [{}]\ninput: ".format(settings["max_"],settings["currency_"])))   
+                                settings["max_"] = float(input("\nCurrent maximum: {}\nPlease enter the maximum coin amount for your currency: [{}]\ninput: ".format(settings["max_"],settings["currency_"])))
+                                while not(settings["max_"].is_integer()):
+                                    input("Penny fractions do not exist. [Press enter to try again]")
+                                    settings["max_"] = float(input("\nCurrent maximum: {}\nPlease enter the maximum coin amount for your currency:[{}]\ninput: ".format(settings["max_"],settings["currency_"])))
+                                while settings["max_"] >= settings["max_"]:
+                                    input("The maximum coin input is less than or equal to the minimum coin input. [Press enter to try again]")
+                                    settings["max_"] = float(input("\nCurrent maximum: {}\nPlease enter the maximum coin amount for your currency:[{}]\ninput: ".format(settings["max_"],settings["currency_"])))                           
+                                while settings["max_"] < 0:
+                                    input("Negative numbers are not allowed. Press enter try again. ")
+                                    settings["max_"] = float(input("\nCurrent maximum: {}\nPlease enter the maximum coin amount for your currency:[{}]\ninput: ".format(settings["max_"],settings["currency_"])))
                                 print("\nStatus - Settings approved [Maximum input (Currency{}): {}]\nreturning to sub-menu.\n".format(settings["currency_"],str(settings["max_"])))
                                 break;
                             except:
@@ -98,14 +117,17 @@ def coin_sort_p02():
                 print("\n================ Multiple Coin calculator ================\n")
                 while True:
                     try:
-                        input_ = int(input("Please insert the amount of pennies you want converting:\ninput: "))
+                        input_ = float(input("Please insert the amount of pennies you want converting:\ninput: "))
                         remainder = input_
                         if input_ >=settings["min_"] and input_ <= settings["max_"]:
+                            while not(input_.is_integer()):
+                                input("Penny fractions do not exist. [Press enter to try again]")
+                                input_ = float(input("Please insert the amount of pennies you want converting:\ninput: "))
                             print("\nUsing all coins (in order of importance), you will have:\n ")
                             for i in coin_dict:
                                 print( "***Type: {} -  Number of coins: {}***".format(i , int(remainder/coin_dict[i])))
                                 remainder = remainder % coin_dict[i]
-                            print("Your remainder is: {} pence.".format(remainder))
+                            print("Your remainder is: {} pence.".format(int(remainder)))
                             input("Press Enter to continue...\n")
                             break;
                             
@@ -123,12 +145,14 @@ def coin_sort_p02():
                 print("\n================ Coin calculator ================\n")
                 while True:
                     try:
-                        input_ = int(input("Please insert the amount of pennies you want converting:\ninput: "))
+                        input_ = float(input("Please insert the amount of pennies you want converting:\ninput: "))
                         if (input_ >=settings["min_"] and input_ <= settings["max_"]):
+                            while not(input_.is_integer()):
+                                input("Penny fractions do not exist. [Press enter to try again]")
+                                input_ = float(input("Please insert the amount of pennies you want converting:\ninput: "))
                             for i in coin_dict:
-                                print( "***Type: {} -  Number of coins: {} - Remainder: {} pence.***".format(i , int(input_/coin_dict[i]),input_ % coin_dict[i]))
-                                print("\n")
-                                input("Press Enter to continue...\n")
+                                print( "***Type: {} -  Number of coins: {} - Remainder: {} pence.***".format(i , int(input_/coin_dict[i]),int(input_ % coin_dict[i])))
+                            input("Press Enter to continue...\n")
                             break;
                         else:
                             print("\nValue out of range - Please try again.\n")

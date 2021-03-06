@@ -6,7 +6,7 @@
     # Option to use all coins in order of importance or use single coins
     # Use an API to convert GBP to USD and Malagasy currency
 
-#The code is arguably larger than it needs to be at its most simpliest level. However, the emphasise we wanted to place here and in the future
+#The code is arguably larger than it needs to be at its most simpliest level. However, the emphasis we wanted to place here and in the future
 #is quality assurance (QA). As a team, we identified anomalous scenarious by testing various inputs and used *While True* conditions to keep asking
 # for the appropiate input Examples include:
     #if the user inputs 2.4, we round down and assume the user means 2.
@@ -75,13 +75,17 @@ def coin_sort_p01(): # define the coin sorting function or program
 #Again, there is a while True condition to check for unexpected inputs 
     while True:      
         try: #try this block of code, if not valid, we loop and ask for input again. I.E input of letter instead of valid coin number
-            pennies_input = (input("Please input the amount of pennies (GBP) you want exchanging:\ninput:")) # input number of pennies
-            rounded_input = int(pennies_input) #we round the pennies down if a decimal is provided. 
+            pennies_input = input("Please input the amount of pennies (GBX) you want exchanging:\ninput:") # input number of pennies
+            rounded_input = float(pennies_input) #we round the pennies down if a decimal is provided. 
             remainder = rounded_input #We create a remainder variable for later. This is used to print the remainding pennies after calculation
             
             while True: 
                 if rounded_input >=settings['min_'] and rounded_input <= settings['max_']: # Condition to check if input is in the appropiate range
-                    break;
+                        while not(rounded_input.is_integer()):
+                            input("Penny fractions do not exist. [Press enter to try again]")
+                            pennies_input = (input("Please input the amount of pennies (GBX) you want exchanging:\ninput:")) 
+                            rounded_input = float(pennies_input) 
+                        break;
                 print("please enter correct coin range!") # notify user if input not in range
                 pennies_input = (input("Please input the amount of pennies you want exchanging:\ninput:")) # asking user again if an error occurs
                 rounded_input = int(pennies_input)
@@ -102,7 +106,7 @@ def coin_sort_p01(): # define the coin sorting function or program
     if exclude.upper() =="Y": # If user wants to exclude inputs: ....(has input Y)
         while True:
             try:
-                print ("Please the coins you want removed (Example input - [012] removes £2, £1 and 50p):") # type all keys to be removed
+                print ("Please insert the coins you want removed (Example input - [201] removes £2, £1 and 50p):") # type all keys to be removed
                 for item in range(len(coins_interface)): # the keys correspond to the positions in the list. we record this and use it to
                 #remove chosen values from dictionary
                     print (coins_interface[item] + "     key: [" + str(item) + "]")
@@ -130,7 +134,7 @@ def coin_sort_p01(): # define the coin sorting function or program
     for i in coin_dict:
         print( "***Type: {} -  Number of coins: {}***".format(i , int(remainder/coin_dict[i])))
         remainder = remainder % coin_dict[i] # Going through each iteration, we find the remainder to tell the user at the end
-    print("Your remainder is: {} pence.".format(remainder))
+    print("Your remainder is: {} pence.".format(int(remainder)))
             
         
     
