@@ -13,9 +13,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox,QDialog,QVBox
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
-
+import pyqtgraph as pg
 import sys
-
 
 coin_dict =  {"£2": 200,"£1": 100,"50p": 50,"20p": 20,"10p":10 }
 coins_interface = ["£2","£1","50p","20p","10p"]
@@ -103,24 +102,27 @@ class Ui_MainWindow(QWidget):
         self.l3.setObjectName("label")
         
         # Top left graphics view box
-        self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView = pg.PlotWidget(self.centralwidget)
         self.graphicsView.setGeometry(QtCore.QRect(570, 10, 256, 201))
         self.graphicsView.setObjectName("graphicsView")
-        
+        self.graphicsView.plot([1,2,3],[1,1,1])
         # Top right graphics view box
-        self.graphicsView_2 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_2 = pg.PlotWidget(self.centralwidget)
         self.graphicsView_2.setGeometry(QtCore.QRect(830, 10, 256, 201))
         self.graphicsView_2.setObjectName("graphicsView_2")
+        self.graphicsView_2.plot([1,2,3],[1,1,1])
         
         # Bottom left graphics view box
-        self.graphicsView_3 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_3 = pg.PlotWidget(self.centralwidget)
         self.graphicsView_3.setGeometry(QtCore.QRect(570, 221, 256, 201))
         self.graphicsView_3.setObjectName("graphicsView_3")
+        self.graphicsView_3.plot([1,2,3,4],[1,4,9,16])
         
         # Bottom right graphics view box
-        self.graphicsView_4 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_4 = pg.PlotWidget(self.centralwidget)
         self.graphicsView_4.setGeometry(QtCore.QRect(830, 221, 256, 201))
         self.graphicsView_4.setObjectName("graphicsView_4")
+        self.graphicsView_4.plot([1,2,3])
         
         MainWindow.setCentralWidget(self.centralwidget)
         
