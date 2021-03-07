@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets, QtQuickWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox,QDialog,QVBoxLayout, QDialogButtonBox,QPushButton, QGridLayout,QLineEdit,QWidget,QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox,QDialog,QVBoxLayout, QDialogButtonBox,QPushButton, QGridLayout,QLineEdit,QWidget,QLabel,QGroupBox
 import sys
 
 
@@ -24,6 +24,9 @@ class Ui_MainWindow(QWidget):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(502, 468)
+        
+        self.secondwindow = show_details()
+        
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         
@@ -193,6 +196,10 @@ class Ui_MainWindow(QWidget):
         self.w = show_details()
         self.w.show()
         
+    def passingInformation(self):
+        self.secondwindow.setText(self.l3.text())
+        self.secondwindow.displayinfo()
+        
             
     
 
@@ -200,12 +207,14 @@ class Ui_MainWindow(QWidget):
     def config_popup(self):
         msg = QMessageBox()
         msg.setWindowTitle("Program Configurations")
-        msg.setText("This is where we can display our configs") # Change text to include configs.
+        msg.setText("Currency: {}\nMaximum coin limit: {}\nMinimum coin limit: {}".format(settings["currency_"],settings["max_"],settings["min_"])) # Change text to include configs.
         msg.setInformativeText("This is the informative text.")
         msg.setIcon(QMessageBox.Information) # Information icon 
         msg.setStandardButtons(QMessageBox.Ok)
         msg.buttonClicked.connect(self.popup_button)
         x = msg.exec_()    
+        
+ 
     
     def popup_button(self, i):
         print(i.text())
@@ -219,13 +228,80 @@ class show_details(QWidget):
     """
     def __init__(self):
         super().__init__()
-        layout = QVBoxLayout()
-        self.label = QLabel("Set details")
-        layout.addWidget(self.label)
-        self.setLayout(layout)
-
+        self.create_grid_layout()
+        windowLayout = QVBoxLayout()
+        windowLayout.addWidget(self.horizontalGroupBox)
+        self.setLayout(windowLayout)
+        self.test123 = Ui_MainWindow()
+        
+        self.setLayout(windowLayout)
     
+    def create_grid_layout(self):
+        self.horizontalGroupBox = QGroupBox("Grid")
+        layout = QGridLayout()
+        layout.setColumnStretch(1, 4)
+        layout.setColumnStretch(2, 4)
+        
+        self.input_currency = QLineEdit()
+        self.input_max_coin = QLineEdit()
+        self.input_min_coin = QLineEdit()
+        self.confirm_settings = QPushButton("ok")
+        
+        layout.addWidget(QLabel('Please Set your configuration!'),0,0,1,1)
+        layout.addWidget(QLabel('Currency'),1,0)
+        layout.addWidget(self.input_currency,1,1)
+        layout.addWidget(QLabel('Max coin input'),2,0)
+        layout.addWidget(self.input_max_coin,2,1)
+        layout.addWidget(QLabel("Min coin input"),3,0)
+        layout.addWidget(self.input_min_coin,3,1)
+        layout.addWidget(self.confirm_settings,4,1,1,1)
+        
+        self.horizontalGroupBox.setLayout(layout)
+        
+        self.confirm_settings.clicked.connect(self.change_settings)
+        
+    def change_settings(self):
 
+        try:
+
+            text_input_currency = (self.input_currency.text()).upper()
+            text_maximum = float(self.input_max_coin.text())
+            text_minimum = float(self.input_min_coin.text())
+            if not(text_maximum.is_integer()) or not(text_minimum.is_integer()) :
+                print("hi")
+                msg = QMessageBox()
+                msg.setWindowTitle("Error")
+                msg.setText("Error - coin fractions do not exist") # Change text to include configs.
+                x = msg.exec_()
+            elif text_input_currency not in settings["currency_list"]:
+                msg = QMessageBox()
+                msg.setWindowTitle("Error")
+                msg.setText("Please enter one of the following currencies:\n [GBX] [USD] [MGA]") # Change text to include configs.
+                x = msg.exec_()
+            elif (text_maximum <= text_minimum) or (text_minimum >= text_maximum):
+                print("hi")
+                msg = QMessageBox()
+                msg.setWindowTitle("Error")
+                msg.setText("Contradiction in coin limits") # Change text to include configs.
+                x = msg.exec_()
+                
+                    
+            else:
+                settings["max_"] = text_maximum
+                settings["min_"] = text_minimum
+                settings["currency_"] = text_input_currency
+                self.close()
+        except:
+            msg = QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText("Please enter input arguments!") # Change text to include configs.
+
+            x = msg.exec_() 
+        
+        
+        
+    
+        
         
         
         
