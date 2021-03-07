@@ -34,7 +34,7 @@ def coin_sort_p01(): # define the coin sorting function or program
     settings = {"max_":10000,"min_":0} # dictionary for configuration settings Max_ and min_ are static configurations required for part 01. The user can print these
     import requests
     URL_BASE = "https://www.amdoren.com/api/currency.php" # URL to grab information 
-    API_KEY = "gYTF2whbuE9GRn6qcCzFq5m8SsypSn" # API key required to grab data from web server NB limit of 10 per day for free users
+    API_KEY = "EXhU7kDVy7fkrHJYNtwGePkwzcxsxS" # API key required to grab data from web server NB limit of 10 per day for free users
     number_of_coins_list =[]; # create a list due to various scenarios that will cause incorrect output
     def convert_currency( #define a function to grab currency from a web server we USE JSON format and grab inputs needed to get a response back
                          #requires from_ (the current currency), to (currency to convert to), data_type and finally the API key defined above

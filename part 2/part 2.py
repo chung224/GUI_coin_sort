@@ -36,7 +36,7 @@ def coin_sort_p02():
 ###############################################################################################                
             if navigation_1 ==5:
                 print("\n\n================ Current configuration ================ \n" +
-                  "Minimum input: {}\n".format(settings["min_"] * settings["currency_convert"]) + 
+                  "Minimum input: {}\n".format(int(settings["min_"] * settings["currency_convert"])) + 
                   "Maximum input: {}\n".format(settings["max_"] * settings["currency_convert"]) + 
                   "Current Currency: {}\n".format(settings["currency_"] + "\n"))
                 input("Press Enter to continue...\n")
