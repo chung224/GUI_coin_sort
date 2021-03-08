@@ -9,17 +9,94 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets, QtQuickWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox,QDialog,QVBoxLayout, QDialogButtonBox,QPushButton, QGridLayout,QLineEdit,QWidget,QLabel,QGroupBox,QCheckBox
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,QDialog,QVBoxLayout, 
+                             QDialogButtonBox,QPushButton, QGridLayout,QLineEdit,QWidget,
+                             QLabel,QGroupBox,QCheckBox, QFileDialog)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
 import pyqtgraph as pg
+pg.setConfigOption('background', 'k')
 import sys
 
+#==========================================================
 coin_dict =  {"£2": 200,"£1": 100,"50p": 50,"20p": 20,"10p":10 }
 coins_interface = ["£2","£1","50p","20p","10p"]
 keys = [1,2,3,4,5,6]
 settings = {"max_": 10000,"min_":0,"currency_":"GBX","currency_convert":1, "currency_list":["GBX","MGA","USD"]}
+#==========================================================
+
+
+
+
+#==========Grabbing live data on USD currencies============
+#==========================================================
+import pandas as pd
+from datetime import datetime
+start_date= str(datetime.today().strftime('%Y-%m-%d'))
+'2021-01-26'
+currency ="USDGBP"
+currency_2 = "BTCGBP"
+api_key = "C8aCRqjU_tDz--u6ZIZY"
+start_date = "2019-10-01"
+end_date= "2019-10-30"
+format = "records"
+fields = "ohlc"
+
+df = pd.read_json("https://tm-marketdata.com/api/v1/pandasDF?currency="+currency+"&api_key="+api_key+"&start_date="+start_date+"&end_date="+end_date+"&format="+format+"&fields="+fields)
+df = df.set_index("date")
+
+x_axis = list(range(1,15))
+
+df['5_day_MA'] =  df.close.rolling(5).mean()
+df['5_day_volatility'] = df.close.rolling(5).std()
+df = df.dropna()
+y_axis = df['5_day_MA'].tolist()
+y_axis = y_axis[:14]
+
+df_2 = pd.read_json("https://tm-marketdata.com/api/v1/pandasDF?currency="+currency_2+"&api_key="+api_key+"&start_date="+start_date+"&end_date="+end_date+"&format="+format+"&fields="+fields)
+df_2 = df_2.set_index("date")
+df_2['5_day_MA'] =  df.close.rolling(5).mean()
+df_2['5_day_volatility'] = df.close.rolling(5).std()
+df_2 = df_2.dropna()
+y_axis_2 = df_2['5_day_MA'].tolist()
+y_axis_2 = y_axis_2[:14]
+
+#=========================================================
+#==========================================================
+
+
+#=======Grabbing stock prices of Amazon and netflix========
+#==========================================================
+import yfinance as yf
+data = yf.download("AMZN", start=start_date, end=end_date)
+
+data_1_open = data["Open"].tolist()
+data_1_open = data_1_open[:14]
+data_1_high = data["High"].tolist()
+data_1_high = data_1_high[:14]
+data_1_low  = data["Low"].tolist()
+data_1_low  = data_1_low[:14]
+
+data = yf.download("NFLX", start=start_date, end=end_date)
+data_2_open = data["Open"].tolist()
+data_2_open = data_2_open[:14]
+data_2_high = data["High"].tolist()
+data_2_high = data_2_high[:14]
+data_2_low = data["Low"].tolist()
+data_2_low = data_2_low[:14]
+#==========================================================
+#==========================================================
+
+#Neural network to read "bank note" after uploading an image of it of required size======================
+#!!! Neural may take a while to train. if your computer is slow, 
+#please delete this subsection from your code and ignore the
+#currency converter button
+
+
+
+
+#=========================================================================================================
 
 
 
@@ -67,6 +144,7 @@ class Ui_MainWindow(QWidget):
         self.b6 = QtWidgets.QPushButton(self.centralwidget)
         self.b6.setGeometry(QtCore.QRect(30, 240, 191, 32))
         self.b6.setObjectName("b6")
+        self.b6.clicked.connect(self.neural_net_warning)
         # Need to add click event here
 
         # Quit the Program Button
@@ -105,24 +183,36 @@ class Ui_MainWindow(QWidget):
         self.graphicsView = pg.PlotWidget(self.centralwidget)
         self.graphicsView.setGeometry(QtCore.QRect(570, 10, 256, 201))
         self.graphicsView.setObjectName("graphicsView")
-        self.graphicsView.plot([1,2,3],[1,1,1])
+        self.graphicsView.addLegend(size=(10,30),offset=(-120,-80))
+        self.graphicsView.plot(x_axis,data_1_open,name="Open",pen="y")
+        self.graphicsView.plot(x_axis,data_1_high,name="High",pen="g")
+        self.graphicsView.plot(x_axis,data_1_low,name="Low",pen = "r")
+        self.graphicsView.setLabels(title='Amazon Shares - daily',left = "Stock price (£)",bottom = "days [most recent]")
         # Top right graphics view box
         self.graphicsView_2 = pg.PlotWidget(self.centralwidget)
         self.graphicsView_2.setGeometry(QtCore.QRect(830, 10, 256, 201))
         self.graphicsView_2.setObjectName("graphicsView_2")
-        self.graphicsView_2.plot([1,2,3],[1,1,1])
+        self.graphicsView_2.addLegend(size=(10,30),offset=(-120,-80))
+        self.graphicsView.addLegend(size=(10,30),offset=(-120,-80))
+        self.graphicsView_2.plot(x_axis,data_2_open,name="Open",pen="y")
+        self.graphicsView_2.plot(x_axis,data_2_high,name="High",pen="g")
+        self.graphicsView_2.plot(x_axis,data_2_low,name="Low",pen = "r")
+        self.graphicsView_2.setLabels(title='Netflix Shares - daily',left = "Stock price (£)", bottom = "days [most recent]")
         
         # Bottom left graphics view box
         self.graphicsView_3 = pg.PlotWidget(self.centralwidget)
+        #self.graphicsView_3.addLegend(size=(10,30),offset=(70,10))
         self.graphicsView_3.setGeometry(QtCore.QRect(570, 221, 256, 201))
         self.graphicsView_3.setObjectName("graphicsView_3")
-        self.graphicsView_3.plot([1,2,3,4],[1,4,9,16])
+        self.graphicsView_3.plot(x_axis,y_axis,pen='r',name = "Change over time")
+        self.graphicsView_3.setLabels(title="USD currency changes [days]",left="USD/GBP")
         
         # Bottom right graphics view box
         self.graphicsView_4 = pg.PlotWidget(self.centralwidget)
         self.graphicsView_4.setGeometry(QtCore.QRect(830, 221, 256, 201))
         self.graphicsView_4.setObjectName("graphicsView_4")
-        self.graphicsView_4.plot([1,2,3])
+        self.graphicsView_4.plot(x_axis,y_axis_2, pen="b")
+        self.graphicsView_4.setLabels(title="BTC currency changes [days]",left = "BTC/GBP")
         
         MainWindow.setCentralWidget(self.centralwidget)
         
@@ -142,7 +232,7 @@ class Ui_MainWindow(QWidget):
         self.b3.setText(_translate("MainWindow", "Print Coin List"))
         self.b4.setText(_translate("MainWindow", "Set Details"))
         self.b5.setText(_translate("MainWindow", "Display Program Config."))
-        self.b6.setText(_translate("MainWindow", "Currency Exchange"))
+        self.b6.setText(_translate("MainWindow", "Currency exchange - upload"))
         self.b7.setText(_translate("MainWindow", "Quit the Program"))
         self.l1.setText(_translate("MainWindow", "Capstone Financial Services Ltd."))
         self.l2.setText(_translate("MainWindow", "***Coin Sorter - Main Menu***"))
@@ -261,11 +351,31 @@ class Ui_MainWindow(QWidget):
     # Added this function as it logs which buttons are clicked in the terminal
     # May be useful for tracking the user inputs
     
+    def neural_net_warning(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Program Configurations")
+        msg.setText("Please upload an image of a bank note for automatic recognition")
+        msg.setInformativeText("Warning - Neural network training times will vary depending on your laptop/PC's performance. Press ok to continue. Otherwise click cancel")
+        msg.setIcon(QMessageBox.Information) # Information icon 
+        neural_net_accept = QtGui.QPushButton("OK")
+        neural_net_decline = QtGui.QPushButton("Cancel")
+        msg.addButton(neural_net_accept, QtGui.QMessageBox.YesRole)
+        msg.addButton(neural_net_decline, QtGui.QMessageBox.NoRole)
+        #msg.setStandardButtons(QMessageBox.Ok)
+        #msg.setStandardButtons(QMessageBox.Cancel)
+        #msg.buttonClicked.connect(self.neuralnet_detect_banknote)
+        neural_net_accept.clicked.connect(self.neuralnet_detect_banknote)
+        x = msg.exec_()    
+    
+    def neuralnet_detect_banknote(self):
+        image = QFileDialog.getOpenFileName(None, 'OpenFile', '', "Image file(*.jpg)")
+        imagePath = image[0]
+        type(image)
+        print(image)
+        type(imagePath)
+        print(imagePath)
+    
 class show_details(QWidget):
-    """
-    This "window" is a QWidget. If it has no parent, it
-    will appear as a free-floating window as we want.
-    """
     def __init__(self):
         super().__init__()
         self.create_grid_layout()
@@ -359,6 +469,7 @@ class show_details(QWidget):
             msg.setWindowTitle("Error")
             msg.setText("Please enter input arguments!") # Change text to include configs.
             x = msg.exec_()
+
 
 
         
