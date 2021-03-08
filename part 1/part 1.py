@@ -8,11 +8,18 @@
 
 #The code is arguably larger than it needs to be at its most simpliest level. However, the emphasis we wanted to place here and in the future
 #is quality assurance (QA). As a team, we identified anomalous scenarious by testing various inputs and used *While True* conditions to keep asking
-# for the appropiate input Examples include:
-    #if the user inputs 2.4, we round down and assume the user means 2.
-    # If the user inputs say, letters, then keep asking for appropiate input and display error messages.
-    #what if the user uses capital letters? we deal with itin our program.
-    #For coin exclusions, if different numbers are pressed or certain keys pressed more than once, we handle this by using sets
+# for the appropiate input. --> See Google Docs under bug testing
+
+#Errors found and fixed with notification to user:
+    #if user chooses to remove all coins - deal with this during calculation
+    #if user sets the maximum to be smaller than the minimum (and vice verse with larger), deal with this
+    #if user types a decimal for any coin inputs 
+    #if the user types special keys for text or text for int (etc etc)
+    #if the user types a key outside the desired range 
+    #case sensitive inputs 
+    #negative coin inputs
+    #upon asking for coin removal by typing certain keys. if the user types a number more than once, we deal with this
+    
 
 #A brief description will be provided by each section followed by code comments 
 
@@ -24,7 +31,6 @@ def coin_sort_p01(): # define the coin sorting function or program
 #In the first section we grab all the essential tools we will need. 
 
     import os #Import libraries OS used for file exploration, requests is used for API connectivity. 
-    import requests
     URL_BASE = "https://www.amdoren.com/api/currency.php" # URL to grab information 
     TESTING = os.getenv("CI", True) # Test if API request works
     def split(word): # define a function to split an input -word- used later. 
@@ -71,7 +77,8 @@ def coin_sort_p01(): # define the coin sorting function or program
         if continue_.upper()=="I": # Alternatively if user Ignores viewing configuration and Wants to continue, break loop
             break
 ##########################################SECTION 3 ###################################################
-#This code asks the user to input a certain amount in pennies to be converted.
+#######################################################################################################
+#This relates to the user to input a certain amount in pennies to be converted.
 #Again, there is a while True condition to check for unexpected inputs 
     while True:      
         try: #try this block of code, if not valid, we loop and ask for input again. I.E input of letter instead of valid coin number
@@ -79,22 +86,24 @@ def coin_sort_p01(): # define the coin sorting function or program
             rounded_input = float(pennies_input) #we round the pennies down if a decimal is provided. 
             remainder = rounded_input #We create a remainder variable for later. This is used to print the remainding pennies after calculation
             
-            while True: 
+            while True: #keep running this loop until broken
                 if rounded_input >=settings['min_'] and rounded_input <= settings['max_']: # Condition to check if input is in the appropiate range
                         while not(rounded_input.is_integer()):
-                            input("Penny fractions do not exist. [Press enter to try again]")
-                            pennies_input = (input("Please input the amount of pennies (GBX) you want exchanging:\ninput:")) 
+                            input("Penny fractions do not exist. [Press enter to try again]") # ask user to press enter after notifying
+                            pennies_input = (input("Please input the amount of pennies (GBX) you want exchanging:\ninput:")) #ask for another input
                             rounded_input = float(pennies_input) 
-                        break;
-                print("please enter correct coin range!") # notify user if input not in range
-                pennies_input = (input("Please input the amount of pennies you want exchanging:\ninput:")) # asking user again if an error occurs
-                rounded_input = int(pennies_input)
+                break; #break to loop at the end regardless  of criteria
+                        
+            print("please enter correct coin range!") # notify user if input not in range
+            pennies_input = (input("Please input the amount of pennies (GBX) you want exchanging:\ninput:")) # asking user again if an error occurs
+            rounded_input = int(pennies_input) # we convert the string the input
         except:
             pennies_input = print("Please provide a valid input.\n") # second type of error, input of a letter instead of number, weird characters etc
             continue
         else:
             break
 ##########################################SECTION 4 ###################################################
+#######################################################################################################
 # The emphasis in section 4 gives the user the option to exclude certain coins from calculations
     while True:
         exclude = input("Do you want to exclude any certain coins? [Y/N]\ninput: ") # We ask the user if users wants to exclude certain coins
@@ -118,41 +127,53 @@ def coin_sort_p01(): # define the coin sorting function or program
                 print("invalid argument, please try again") # if error produced, i.e invalid value/out of range....notify user.
             else:
                 break; 
-    
-    print("Your input: {} pence. \ncalculating number of coins you will have for each type:".format(rounded_input)) 
+##########################################SECTION 5 ###################################################
+#######################################################################################################  
+#upon excluding certain coins, we finally do calculations utilizing the tools initiated at the start of the script.
+#this section attempts to only a single type of coin to calcualte remainder + number of coins
+#section 6 users all coins and uses importance of denomination to do the same
+    print("Your input: {} pence. \ncalculating number of coins you will have for each type:".format(int(rounded_input))) #tell user what they inputted
     for i in coin_dict: # for each item in the dictionary (after removal of some, if any...print number of coins + remainder)
         print( "***Type: {} -  Number of coins: {} - Remainder: {} pence.***".format(i , int(rounded_input/coin_dict[i]),rounded_input % coin_dict[i]))
     #The bottom secction includes all coins, and ranks the order based on importance (order of dictionary)
         if int(rounded_input/coin_dict[i])!= 0:
             number_of_coins_list.append(int(rounded_input/coin_dict[i])) # create a list due to various scenerios that will cause 
-    try:
+    try: # we attempt to print the maximum number of coins and minimum 
         print("\nThe maximum number of coins you can receive is: {}. | The minimum number of coins you can receive is {}.\n".format(max(number_of_coins_list),min(number_of_coins_list)))
-    except:
-        print("\nBoth the Maximum/Minimum number of coins obtained is zero! ")
-    
-    print("\nUsing all coins (in order of importance), you will have: ")  
-    for i in coin_dict:
-        print( "***Type: {} -  Number of coins: {}***".format(i , int(remainder/coin_dict[i])))
-        remainder = remainder % coin_dict[i] # Going through each iteration, we find the remainder to tell the user at the end
-    print("Your remainder is: {} pence.".format(int(remainder)))
+    except: # If both the maximum number of coins and minimum number of coins is zero run this block i.e all coins removed
+        print("\nBoth the Maximum/Minimum number of coins obtained is zero! ") # notify user of this
+        
+##########################################SECTION 6 ###################################################
+####################################################################################################### 
+#In this section we user all coins in order of importance to calcualte how many coins of each type while also printing the remainder to the user
+    print("\nUsing all coins (in order of importance), you will have: ")  #notify user
+    for i in coin_dict: # for each item in the dictionary
+        print( "***Type: {} -  Number of coins: {}***".format(i , int(remainder/coin_dict[i]))) # calcute remainder and number of coins, going
+        #through each type
+        remainder = remainder % coin_dict[i] # Going through each iteration, we keep updating the raminder
+    print("Your remainder is: {} pence.".format(int(remainder))) # finally, print the overall remainder to the user
             
         
     
-##########################################SECTION 5 ###################################################
+##########################################SECTION 7 ###################################################
+#######################################################################################################
 #This section uses the API defined above using the requests library.  We only ask the user to input the required amount and choice of currency
-    while True:
-        try:
+    while True: # keep running this loop until broken
+        try: # try this block of code
             currency = input("Please Type: \n[0] for US currency conversion\n[1] for Malagay currency conversion\n[2] to quit\n")
-            if currency =="2":
-                print("Thank you come again!")
-                break
-            elif currency =="1":
+            #above - ask uder to input a key for certain currency or quit the program
+            if currency =="2": # if user types -2- end program
+                print("Thank you come again!") 
+                break # stop loop end program
+            elif currency =="1": # if user types -1- convert GBP to USD. we ask user for an amount in pounds before calling the api function
+            #and convert
                 print(convert_currency("GBP".strip(),"USD".strip(),float(input("Enter the amount[£]: ").strip()),))
-                break
+                break # after conversion done, break loop and exit
             elif currency =="0":
-                print(convert_currency("GBP".strip(),"MGA".strip(),float(input("Enter the amount[£]: ").strip()),))
-                break
+                print(convert_currency("GBP".strip(),"MGA".strip(),float(input("Enter the amount[£]: ").strip()),))# if user types -0- convert GBP to MGA. we ask user for an amount in pounds before calling the api function
+            #and convert
+                break # break loop end function
         except:
-            continue
+            continue # continue even if it breaks
 
 coin_sort_p01() # initiate the defined function
