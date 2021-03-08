@@ -353,9 +353,9 @@ class Ui_MainWindow(QWidget):
     
     def neural_net_warning(self):
         msg = QMessageBox()
-        msg.setWindowTitle("Program Configurations")
-        msg.setText("Please upload an image of a bank note for automatic recognition")
-        msg.setInformativeText("Warning - Neural network training times will vary depending on your laptop/PC's performance. Press ok to continue. Otherwise click cancel")
+        msg.setWindowTitle("testing Neural Network with GUI")
+        msg.setText("This button serves as a protype for neural network implementation in the future for bank note detection. Please upload a jpeg image of any kind to see if it works!")
+        msg.setInformativeText("Warning - \n\n[1] - Although we use a previously trained model, Neural network training times may still be large depending on your laptop/PC's performance.\n\n[2] - Certain Python libraries are required\n\nPlease press ok to continue.Otherwise click cancel")
         msg.setIcon(QMessageBox.Information) # Information icon 
         neural_net_accept = QtGui.QPushButton("OK")
         neural_net_decline = QtGui.QPushButton("Cancel")
@@ -365,16 +365,53 @@ class Ui_MainWindow(QWidget):
         #msg.setStandardButtons(QMessageBox.Cancel)
         #msg.buttonClicked.connect(self.neuralnet_detect_banknote)
         neural_net_accept.clicked.connect(self.neuralnet_detect_banknote)
-        x = msg.exec_()    
+        x = msg.exec_()
+        
+        
     
     def neuralnet_detect_banknote(self):
+        output_final = "==========Neural Network==========\n\n\nThe image you uploaded was found to be a:\n "
         image = QFileDialog.getOpenFileName(None, 'OpenFile', '', "Image file(*.jpg)")
         imagePath = image[0]
-        type(image)
-        print(image)
-        type(imagePath)
-        print(imagePath)
+        try:
+            from tensorflow.keras.preprocessing.image import load_img
+            from tensorflow.keras.preprocessing.image import img_to_array
+            from tensorflow.keras.applications.vgg16 import preprocess_input
+            from tensorflow.keras.applications.vgg16 import decode_predictions
+            from tensorflow.keras.applications.vgg16 import VGG16
+            import tensorflow as tf
+
+            gpus = tf.config.experimental.list_physical_devices('GPU')
+
+            if gpus:
+                    for gpu in gpus:
+                        tf.config.experimental.set_memory_growth(gpu, True)
+        except:
+            self.l3.setText("\nError: \nRequired Libraries or GPU not availble")
+        try:
+            model = VGG16()
+            image = load_img(imagePath, target_size=(224, 224))
+            image = img_to_array(image)
+            image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+            image = preprocess_input(image)
+            yhat = model.predict(image)
+            label = decode_predictions(yhat)
+            label = label[0][0]
+            #sub_ = "test123\n{} with accuracy {}".format(label[1], label[2]*100)
+            #self.l3.setText(output_final)
+            self.l3.setText("\n\nThe neural detected your image to be a {}\n with percentage probability {:.2f}.".format(label[1],label[2]))
+            
+            
+            
+            
+        except: 
+            self.l3.setText("\nError: interuption during model training")
+        
+
+
+
     
+
 class show_details(QWidget):
     def __init__(self):
         super().__init__()
