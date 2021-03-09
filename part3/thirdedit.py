@@ -253,17 +253,17 @@ class Ui_MainWindow(QWidget): #define a class that takes components or widgets d
 
     def retranslateUi(self, MainWindow): #define function to assign names according to widget
         _translate = QtCore.QCoreApplication.translate # define function as variable to translate below
-        MainWindow.setWindowTitle(_translate("MainWindow", "Capstone Financial Services Ltd.")) #set window title
+        MainWindow.setWindowTitle(_translate("MainWindow", "Capstone Financial Services.")) #set window title
         self.b1.setText(_translate("MainWindow", "Coin Calculator"))
         self.b2.setText(_translate("MainWindow", "Multi Coin Calculator"))# we assign all names according to the widget
         self.b3.setText(_translate("MainWindow", "Print Coin List")) # example button3 or b3, is relabelled to Print coin list
         self.b4.setText(_translate("MainWindow", "Set Details"))
         self.b5.setText(_translate("MainWindow", "Display Program Config."))
-        self.b6.setText(_translate("MainWindow", "Currency exchange - upload"))
+        self.b6.setText(_translate("MainWindow", "Currency upload"))
         self.b7.setText(_translate("MainWindow", "Quit the Program"))
         self.l1.setText(_translate("MainWindow", "Capstone Financial Services"))
         self.l2.setText(_translate("MainWindow", "***Coin Sorter - Main Menu***"))
-        self.l3.setText(_translate("MainWindow", "Welcome to Capstone Financial Services Ltd.  Please click on a button to navigate through the program.\n\nSee right for interactive graphs"))
+        self.l3.setText(_translate("MainWindow", "Welcome to Capstone Financial Services. Please click on a button to navigate through the program.\n\nSee right for interactive graphs"))
      
 
 ##########################################SECTION 2 ###################################################
