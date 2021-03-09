@@ -92,16 +92,16 @@ def coin_sort_p01(): # define the coin sorting function or program
                             input("Penny fractions do not exist. [Press enter to try again]") # ask user to press enter after notifying
                             pennies_input = (input("Please input the amount of pennies (GBX) you want exchanging:\ninput:")) #ask for another input
                             rounded_input = float(pennies_input) 
-                break; #break to loop at the end regardless  of criteria
-                        
-            print("please enter correct coin range!") # notify user if input not in range
-            pennies_input = (input("Please input the amount of pennies (GBX) you want exchanging:\ninput:")) # asking user again if an error occurs
-            rounded_input = int(pennies_input) # we convert the string the input
+                        break; #break to loop at the end regardless  of criteria   
+                print("please enter correct coin range!") # notify user if input not in range
+                pennies_input = input("Please input the amount of pennies (GBX) you want exchanging:\ninput:") # input number of pennies
+                rounded_input = float(pennies_input) #we round the pennies down if a decimal is provided. 
+                remainder = rounded_input #We create a remainder variable for later. This is used to print the remainding pennies after calculation
         except:
             pennies_input = print("Please provide a valid input.\n") # second type of error, input of a letter instead of number, weird characters etc
             continue
         else:
-            break
+            break;
 ##########################################SECTION 4 ###################################################
 #######################################################################################################
 # The emphasis in section 4 gives the user the option to exclude certain coins from calculations
